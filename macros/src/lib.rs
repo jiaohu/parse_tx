@@ -31,14 +31,11 @@ pub fn parse_tx(input: TokenStream) -> TokenStream {
 
     // 3. parse action
     let mut action_str = "";
-    re = Regex::new(r#"\{\s*action\s*:\s*"([[:ascii:]]*)","#).unwrap();
-    if let Some(a) = re.captures(origin) {
-        action_str = a.get(1).unwrap().as_str();
-    }
     let mut params_str = "";
-    re = Regex::new(r#"params\s*:\s*"([[:ascii:]]*)""#).unwrap();
+    re = Regex::new(r#"\{\s*action\s*:\s*"(?P<action>[[:ascii:]]*)",\s*params\s*:\s*"(?P<params>[[:ascii:]]*)"\s*\}"#).unwrap();
     if let Some(a) = re.captures(origin) {
-        params_str = a.get(1).unwrap().as_str();
+        action_str = a.name("action").unwrap().as_str();
+        params_str = a.name("params").unwrap().as_str();
     }
 
     let parse_put_data = |mut x: Vec<TokenStream2>, r: &Regex, o_str: &str| -> Vec<TokenStream2> {
