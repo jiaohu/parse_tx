@@ -1,9 +1,14 @@
 ## parse_tx
 
 > this project is used to parse the special string to ```Transaction``` struct.
- 
+
+### Explain
++ `macros` define the macro `parse_tx!`.
++ `types` define the `Transaction` struct.
+
+
 ### Usage
-> now we not publish it, so just use as demo, see in the crate ```example```
+> for it is not published, just use as demo, see in the crate [example](https://github.com/jiaohu/parse_tx/tree/master/example)
 
 ```toml
 [package]
