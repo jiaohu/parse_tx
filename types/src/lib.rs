@@ -13,7 +13,7 @@ pub struct Transaction {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Action {
     pub action: String,
-    pub params: String,
+    pub params: Vec<u8>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

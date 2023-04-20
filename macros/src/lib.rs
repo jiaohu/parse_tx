@@ -31,11 +31,17 @@ pub fn parse_tx(input: TokenStream) -> TokenStream {
 
     // 3. parse action
     let mut action_str = "";
-    let mut params_str = "";
+    let mut params = vec![];
     re = Regex::new(r#"\{\s*action\s*:\s*"(?P<action>[[:ascii:]]*)",\s*params\s*:\s*"(?P<params>[[:ascii:]]*)"\s*\}"#).unwrap();
     if let Some(a) = re.captures(origin) {
         action_str = a.name("action").unwrap().as_str();
-        params_str = a.name("params").unwrap().as_str();
+        let param_str = a.name("params").unwrap().as_str();
+        if param_str.starts_with("0x") {
+            params = hex::decode(&param_str[2..]).unwrap();
+        } else {
+            params = hex::decode(param_str).unwrap();
+        }
+
     }
 
     let parse_put_data = |mut x: Vec<TokenStream2>, r: &Regex, o_str: &str| -> Vec<TokenStream2> {
@@ -79,7 +85,7 @@ pub fn parse_tx(input: TokenStream) -> TokenStream {
             fee: #fee,
             action: my_types::Action {
                 action: String::from(#action_str),
-                params: String::from(#params_str)
+                params: vec![ #( #params ),*]
             },
             inputs: vec![ #( #inputs ),*],
             outputs: vec![ #( #outputs ),*],
@@ -104,7 +110,7 @@ mod tests {
             fee: 0,
             action: Action {
                 action: "123".to_string(),
-                params: "234".to_string(),
+                params: hex::encode("234").into_bytes(),
             },
             inputs: vec![PutData { index: 0, capacity: 0 }],
             outputs: vec![],
